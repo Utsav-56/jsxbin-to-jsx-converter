@@ -29,7 +29,8 @@ cd ..
 # 3. Copy Installation Scripts
 echo "Bundling installation scripts..."
 cp install_scripts/install.sh "$TEMP_DIR/"
-cp install.sh "$TEMP_DIR/" 2>/dev/null || : # Ensure root install script is included if available
+cp install_scripts/install.ps1 "$TEMP_DIR/"
+cp install_scripts/install.bat "$TEMP_DIR/"
 
 # 4. Create ZIP Bundle
 echo "Creating the bundle repository..."

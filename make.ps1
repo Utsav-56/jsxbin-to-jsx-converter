@@ -30,6 +30,8 @@ Set-Location ..
 # 3. Copy Installation Scripts
 Write-Host "Bundling installation scripts..." -ForegroundColor Cyan
 Copy-Item "install_scripts\install.ps1" -Destination "$TempDir\"
+Copy-Item "install_scripts\install.bat" -Destination "$TempDir\"
+Copy-Item "install_scripts\install.sh" -Destination "$TempDir\"
 
 # 4. Create ZIP Bundle
 Write-Host "Creating the bundle repository..." -ForegroundColor Cyan
