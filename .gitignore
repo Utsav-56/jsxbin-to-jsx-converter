@@ -4,3 +4,7 @@ commit.ps1
 
 commit
 commit.ps1
+__temp_compile_build/
+release/
+*.zip
+Jsbeautify
