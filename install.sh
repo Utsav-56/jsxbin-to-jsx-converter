@@ -60,26 +60,43 @@ chmod +x "$INSTALL_DIR/$COMMAND_NAME"
 chmod +x "$INSTALL_DIR/Jsbeautify"
 
 # 6. Shell Path Configuration
-SHELL_RC=""
-if [ -f "$HOME/.bashrc" ]; then
-    SHELL_RC="$HOME/.bashrc"
-elif [ -f "$HOME/.zshrc" ]; then
-    SHELL_RC="$HOME/.zshrc"
-elif [ -f "$HOME/.profile" ]; then
-    SHELL_RC="$HOME/.profile"
+# We apply a "2-step verification" by updating both specific shell RCs and universal profiles
+# This ensures path availability even in non-POSIX shells or different session types.
+
+CONFIG_FILES=("$HOME/.bashrc" "$HOME/.zshrc" "$HOME/.profile" "$HOME/.bash_profile")
+SUCCESSFULLY_CONFIGURED=()
+
+for rc in "${CONFIG_FILES[@]}"; do
+    if [ -f "$rc" ]; then
+        if ! grep -q "$INSTALL_DIR" "$rc"; then
+            echo "" >> "$rc"
+            echo "# JSXBIN to JSX Converter PATH (Added by Installer)" >> "$rc"
+            echo "export PATH=\"\$PATH:$INSTALL_DIR\"" >> "$rc"
+            SUCCESSFULLY_CONFIGURED+=("$rc")
+        fi
+    fi
+done
+
+# Special handling for Fish shell (non-POSIX)
+if [ -d "$HOME/.config/fish/conf.d" ]; then
+    FISH_CONF="$HOME/.config/fish/conf.d/jsxbin-conv.fish"
+    if [ ! -f "$FISH_CONF" ]; then
+        echo "# JSXBIN to JSX Converter PATH (Fish)" > "$FISH_CONF"
+        echo "set -gx PATH \$PATH $INSTALL_DIR" >> "$FISH_CONF"
+        SUCCESSFULLY_CONFIGURED+=("$FISH_CONF")
+    fi
 fi
 
-if [ -n "$SHELL_RC" ]; then
-    if ! grep -q "$INSTALL_DIR" "$SHELL_RC"; then
-        echo "" >> "$SHELL_RC"
-        echo "# JSXBIN to JSX Converter PATH" >> "$SHELL_RC"
-        echo "export PATH=\"\$PATH:$INSTALL_DIR\"" >> "$SHELL_RC"
-        echo "Successfully added $INSTALL_DIR to $SHELL_RC"
-    else
-        echo "Path already configured in $SHELL_RC"
-    fi
+if [ ${#SUCCESSFULLY_CONFIGURED[@]} -gt 0 ]; then
+    echo "Configuration updated in:"
+    for item in "${SUCCESSFULLY_CONFIGURED[@]}"; do
+        echo "  - $item"
+    done
+else
+    echo "Path was already configured in all detected shell profiles."
 fi
 
 echo ""
 echo "Installation Successful!"
-echo "IMPORTANT: Please restart your shell or run: source $SHELL_RC to start using '$COMMAND_NAME'."
+echo "IMPORTANT: Please restart your shell or terminal to apply the new PATH settings."
+echo "You can now run '$COMMAND_NAME' from any new terminal session."
