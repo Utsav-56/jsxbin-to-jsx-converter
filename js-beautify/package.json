@@ -1,15 +1,16 @@
 {
   "name": "js-beautify",
-  "module": "index.ts",
-  "type": "module",
   "private": true,
+  "type": "module",
+  "module": "index.ts",
+  "dependencies": {
+    "prettier": "3.8.1"
+  },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "oxfmt": "^0.42.0"
   },
   "peerDependencies": {
     "typescript": "^5"
-  },
-  "dependencies": {
-    "prettier": "3.8.1"
   }
 }

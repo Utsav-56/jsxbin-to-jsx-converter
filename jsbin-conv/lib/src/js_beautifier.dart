@@ -39,4 +39,15 @@ class JSBeautifier {
       }
     }
   }
+
+  /// Checks if the Jsbeautify binary is available.
+  bool isAvailable() {
+    final command = Platform.isWindows ? 'Jsbeautify.exe' : 'Jsbeautify';
+    try {
+      final process = Process.runSync(command, ['--version']);
+      return process.exitCode == 0;
+    } catch (e) {
+      return false;
+    }
+  }
 }

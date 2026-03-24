@@ -1,5 +1,4 @@
 import 'abstract_node.dart';
-import 'inode.dart';
 import 'node_type.dart';
 
 /// Represents increment/decrement on an indexed member (e.g., arr[i]++).

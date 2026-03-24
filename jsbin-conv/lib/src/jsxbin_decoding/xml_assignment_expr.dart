@@ -1,5 +1,4 @@
 import 'abstract_node.dart';
-import 'inode.dart';
 import 'node_type.dart';
 
 /// Represents assignment/interpolation within XML literals in JSX.

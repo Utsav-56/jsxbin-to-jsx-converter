@@ -160,20 +160,55 @@ dart compile exe bin/jsbin_conv.dart -o jsbin-conv -S debug_info
 
 ## Detailed Usage Guide
 
-### Basic Conversion
-To convert a single file and generate formatted output:
+The converter supports two modes of operation: **Interactive Wizard** (for ease of use) and **CLI Mode** (for automation).
+
+### 1. Interactive Wizard (Recommended for Beginners)
+If you run the program without any arguments, it starts an interactive wizard powered by the `interact` package. This mode guides you through the conversion process with three main options:
+
 ```bash
-dart run bin/jsbin_conv.dart input.jsxbin output.jsx
+# Start the interactive wizard
+dart bin/jsbin_conv.dart
 ```
 
-### Advanced Options
-- **-v (Verbose)**: Prints the hierarchical AST structure to the terminal during decoding. This is useful for developers wanting to see how the script was constructed.
+**Wizard Questions:**
+1.  **Choose Files manually**: Lists all `.jsx` files in the current directory and allows you to select multiple files using a multi-select interface.
+2.  **Convert all files in CWD**: Scans the current working directory for all `.jsxbin` files and batch-converts them.
+3.  **Change dir**: Allows you to change the current working directory without restarting the tool.
+
+### 2. CLI Mode (Recommended for Automation)
+For power users and scripts, the CLI mode provides granular control with optional output paths and automatic collision handling.
+
+#### Basic Conversion
+Convert a single `.jsxbin` file to `.jsx`. The output path is now **optional**.
 ```bash
-dart run bin/jsbin_conv.dart -v input.jsxbin output.jsx
+# With explicit output path
+dart bin/jsbin_conv.dart input.jsxbin output.jsx
+
+# With automatic output path (saves to jsxbin-converted/input.jsx)
+dart bin/jsbin_conv.dart input.jsxbin
 ```
+
+#### Advanced Options
+-   **-v (Verbose)**: Prints the hierarchical AST structure to the terminal during decoding. Useful for debugging or learning.
+```bash
+dart bin/jsbin_conv.dart -v input.jsxbin
+```
+
+### 3. Smart Output Features
+
+#### Automatic Directory Creation
+If no output path is provided, the tool automatically creates a `jsxbin-converted/` directory in your current path and places the decoded scripts there.
+
+#### Filename Collision Handling
+The tool never overwrites your existing files by accident. If the target filename already exists, it intelligently adds a numbered index:
+- `script.jsx` exists -> writes to `script-(1).jsx`
+- `script-(1).jsx` exists -> writes to `script-(2).jsx`
 
 ### Integration Tips
-If globally installed, you can pipe outputs or use it in larger shell scripts to batch-process directories of scripts.
+Since the tool is a standalone executable (after building), you can add it to your `PATH` and use it globally:
+```bash
+jsbin-conv my_plugin.jsxbin
+```
 
 ---
 
