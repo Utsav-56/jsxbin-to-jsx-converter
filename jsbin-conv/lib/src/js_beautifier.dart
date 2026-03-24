@@ -56,4 +56,20 @@ class JSBeautifier {
       return false;
     }
   }
+
+  /// Returns the version of the beautifier binary.
+  static String getVersion() {
+    final command = Platform.isWindows
+        ? 'jsxbin-conv-makeup-man.exe'
+        : 'jsxbin-conv-makeup-man';
+    try {
+      final process = Process.runSync(command, ['--version']);
+      if (process.exitCode == 0) {
+        return process.stdout.toString().trim();
+      }
+      return 'Unknown (exit code ${process.exitCode})';
+    } catch (e) {
+      return 'Not found ($e)';
+    }
+  }
 }
