@@ -2,8 +2,6 @@
 # Handles tool checks, custom command naming, and PATH configuration.
 
 $InstallDir = "C:\utsav-56\jsbin-conv"
-$DartUrl = "https://dart.dev/get-dart"
-$BunUrl = "https://bun.sh"
 
 # 1. Administrator check (just in case directly invoked)
 $currentPrincipal = New-Object Security.Principal.WindowsPrincipal([Security.Principal.WindowsIdentity]::GetCurrent())
@@ -14,26 +12,7 @@ if (-not $currentPrincipal.IsInRole([Security.Principal.WindowsBuiltInRole]::Adm
     exit 1
 }
 
-# 2. Check for Build Tool Dependencies (Dart & Bun)
-Write-Host "Checking for necessary build tools..." -ForegroundColor Gray
-$DartInPath = Get-Command dart -ErrorAction SilentlyContinue
-$BunInPath = Get-Command bun -ErrorAction SilentlyContinue
-
-if (-not $DartInPath -or -not $BunInPath) {
-    if (-not $DartInPath) {
-        Write-Error "Dart SDK is not installed or not in the PATH."
-        Write-Host "We cannot continue without it. Go to $DartUrl and follow along to install it." -ForegroundColor Red
-    }
-    if (-not $BunInPath) {
-        Write-Error "Bun runtime is not installed or not in the PATH."
-        Write-Host "We cannot continue without it. Go to $BunUrl and follow along to install it." -ForegroundColor Red
-    }
-    Write-Host "`nTip: If you installed them and still this error persists, it might not be in your PATH.`nSearch the internet to know how to install to PATH for Windows." -ForegroundColor Yellow
-    pause
-    exit 1
-}
-
-# 3. Handle Installation Mode (Keep Source vs Move)
+# 2. Handle Installation Mode (Keep Source vs Move)
 Write-Host "`nDo you want to keep the original source files after installation?" -ForegroundColor Green
 $KeepFiles = Read-Host "[Y]es / [N]o (Default is No)"
 if ([string]::IsNullOrWhiteSpace($KeepFiles)) { $KeepFiles = "N" }
@@ -43,12 +22,12 @@ if ($KeepFiles -match "^n") {
     Write-Host "Warning: Your files will be moved to $InstallDir. This won't affect your usage and is recommended to keep your directories clean." -ForegroundColor Cyan
 }
 
-# 4. Handle Custom Command Name
+# 3. Handle Custom Command Name
 $CommandName = Read-Host "`nWhat would you like the command to be called? (Default is 'jsxbin-conv')"
 if ([string]::IsNullOrWhiteSpace($CommandName)) { $CommandName = "jsxbin-conv" }
 $FinalExe = "$CommandName.exe"
 
-# 5. Execute Installation
+# 4. Execute Installation
 if (-not (Test-Path $InstallDir)) {
     New-Item -Path $InstallDir -ItemType Directory -Force
 }
@@ -56,8 +35,8 @@ if (-not (Test-Path $InstallDir)) {
 Write-Host "`nStarting installation to $InstallDir..." -ForegroundColor Cyan
 
 # Source files check
-if (-not (Test-Path "jsbin-conv.exe") -or -not (Test-Path "Jsbeautify.exe")) {
-    Write-Error "Required binaries (jsbin-conv.exe, Jsbeautify.exe) not found in the current folder."
+if (-not (Test-Path "jsbin-conv.exe") -or -not (Test-Path "jsxbin-conv-makeup-man.exe")) {
+    Write-Error "Required binaries (jsbin-conv.exe, jsxbin-conv-makeup-man.exe) not found in the current folder."
     pause
     exit 1
 }
@@ -65,10 +44,10 @@ if (-not (Test-Path "jsbin-conv.exe") -or -not (Test-Path "Jsbeautify.exe")) {
 # Copy or Move
 if ($KeepFiles -match "^y") {
     Copy-Item "jsbin-conv.exe" -Destination "$InstallDir\$FinalExe" -Force
-    Copy-Item "Jsbeautify.exe" -Destination "$InstallDir\Jsbeautify.exe" -Force
+    Copy-Item "jsxbin-conv-makeup-man.exe" -Destination "$InstallDir\jsxbin-conv-makeup-man.exe" -Force
 } else {
     Move-Item "jsbin-conv.exe" -Destination "$InstallDir\$FinalExe" -Force
-    Move-Item "Jsbeautify.exe" -Destination "$InstallDir\Jsbeautify.exe" -Force
+    Move-Item "jsxbin-conv-makeup-man.exe" -Destination "$InstallDir\jsxbin-conv-makeup-man.exe" -Force
 }
 
 # 6. Set PATH Environment Variable

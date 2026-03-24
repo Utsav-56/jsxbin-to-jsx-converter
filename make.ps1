@@ -16,8 +16,7 @@ New-Item -Path $ReleaseDir -ItemType Directory
 Write-Host "Compiling Dart core engine..." -ForegroundColor Cyan
 Set-Location jsbin-conv
 dart pub get
-# -S removes debugging information from the output
-dart compile exe bin/jsbin_conv.dart -o "..\$TempDir\jsbin-conv.exe" -S "..\$TempDir\debug_info"
+dart compile exe bin/jsbin_conv.dart -o "..\$TempDir\jsbin-conv.exe" -Ddart.vm.product=true --target-os=windows
 Set-Location ..
 
 # 2. Bundle Clang-format based beautifier (The "Makeup Man")
@@ -28,7 +27,6 @@ Copy-Item "assets\jsxbin-conv-makeup-man.exe" -Destination "$TempDir\"
 Write-Host "Bundling installation scripts..." -ForegroundColor Cyan
 Copy-Item "install_scripts\install.ps1" -Destination "$TempDir\"
 Copy-Item "install_scripts\install.bat" -Destination "$TempDir\"
-Copy-Item "install_scripts\install.sh" -Destination "$TempDir\"
 
 # 4. Create ZIP Bundle
 Write-Host "Creating the bundle repository..." -ForegroundColor Cyan

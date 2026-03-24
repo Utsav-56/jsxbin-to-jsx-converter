@@ -15,8 +15,7 @@ mkdir -p "$TEMP_DIR" "$RELEASE_DIR"
 echo "Compiling Dart core engine..."
 cd jsbin-conv
 dart pub get
-# -S strips debug info; --obfuscate requires --split-debug-info for mapping if needed
-dart compile exe bin/jsbin_conv.dart -o "../$TEMP_DIR/jsbin-conv" -S "../$TEMP_DIR/debug_info"
+dart compile exe bin/jsbin_conv.dart -o "../$TEMP_DIR/jsbin-conv" -Ddart.vm.product=true --target-os=$PLATFORM
 cd ..
 
 # 2. Copy Clang-format based beautifier (The "Makeup Man")
@@ -27,8 +26,6 @@ cp assets/jsxbin-conv-makeup-man "$TEMP_DIR/"
 # 3. Copy Installation Scripts
 echo "Bundling installation scripts..."
 cp install_scripts/install.sh "$TEMP_DIR/"
-cp install_scripts/install.ps1 "$TEMP_DIR/"
-cp install_scripts/install.bat "$TEMP_DIR/"
 
 # 4. Create ZIP Bundle
 echo "Creating the bundle repository..."
