@@ -1,48 +1,54 @@
+import 'dart:convert';
 import 'dart:io';
-import 'package:path/path.dart' as p;
 
-/// Provides a wrapper around the Jsbeautify external binary.
+/// Provides a wrapper around the clang-format based beautifier.
 class JSBeautifier {
-  /// Beautifies the provided [source] string using the external 'Jsbeautify' command.
-  /// This implementation writes to a temporary file as the binary works on files directly.
+  /// Beautifies the provided [source] string using the embedded 'jsxbin-conv-makeup-man' binary.
   Future<String> beautify(String source) async {
     // Determine the command based on the OS.
-    final command = Platform.isWindows ? 'Jsbeautify.exe' : 'Jsbeautify';
+    final command = Platform.isWindows
+        ? 'jsxbin-conv-makeup-man.exe'
+        : 'jsxbin-conv-makeup-man';
 
-    final tempDir = Directory.systemTemp.createTempSync('jsbin-conv-');
-    final tempFile = File(p.join(tempDir.path, 'output.js'));
+    // Clang-format configuration style.
+    const styleConfig =
+        '{Language: JavaScript, BasedOnStyle: Google, IndentWidth: 2, JavaScriptQuotes: Single, ColumnLimit: 100}';
 
     try {
-      await tempFile.writeAsString(source);
+      // Start the process with the style configuration.
+      final process = await Process.start(command, [
+        '-style=$styleConfig',
+        '--assume-filename=output.js',
+      ]);
 
-      // We assume the binary is in the PATH or in the relative directory.
-      // Note: In production, the user would provide the path or have it in PATH.
-      final process = await Process.run(command, [tempFile.path]);
+      // Write the source code to the process's stdin.
+      process.stdin.write(source);
+      await process.stdin.close();
 
-      if (process.exitCode != 0) {
-        stderr.writeln(
-          "Jsbeautify failed with exit code ${process.exitCode}: ${process.stderr}",
-        );
+      // Collect the formatted output from stdout.
+      final output = await process.stdout.transform(utf8.decoder).join();
+      final error = await process.stderr.transform(utf8.decoder).join();
+
+      final exitCode = await process.exitCode;
+      if (exitCode != 0) {
+        stderr.writeln("jsxbin-conv-makeup-man failed with exit code $exitCode: $error");
         return source;
       }
 
-      final formattedCode = await tempFile.readAsString();
-      return formattedCode;
+      return output;
     } catch (e) {
       stderr.writeln(
-        "Could not run $command. Please ensure it is installed and in your PATH. Error: $e",
+        "Could not run $command. Please ensure it is bundled correctly. Error: $e",
       );
       return source;
-    } finally {
-      if (tempDir.existsSync()) {
-        tempDir.deleteSync(recursive: true);
-      }
     }
   }
 
-  /// Checks if the Jsbeautify binary is available.
+  /// Checks if the beautifier binary is available.
   bool isAvailable() {
-    final command = Platform.isWindows ? 'Jsbeautify.exe' : 'Jsbeautify';
+    final command = Platform.isWindows
+        ? 'jsxbin-conv-makeup-man.exe'
+        : 'jsxbin-conv-makeup-man';
     try {
       final process = Process.runSync(command, ['--version']);
       return process.exitCode == 0;

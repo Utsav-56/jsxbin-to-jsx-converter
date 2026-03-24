@@ -8,3 +8,6 @@ __temp_compile_build/
 release/
 *.zip
 Jsbeautify
+
+*.exe
+assets/

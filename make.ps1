@@ -20,12 +20,9 @@ dart pub get
 dart compile exe bin/jsbin_conv.dart -o "..\$TempDir\jsbin-conv.exe" -S "..\$TempDir\debug_info"
 Set-Location ..
 
-# 2. Compile Bun (minified and bytecode cached)
-Write-Host "Compiling Bun beautification engine..." -ForegroundColor Cyan
-Set-Location js-beautify
-bun install
-bun build ./index.ts --compile --minify --bytecode --outfile "..\$TempDir\Jsbeautify.exe"
-Set-Location ..
+# 2. Bundle Clang-format based beautifier (The "Makeup Man")
+Write-Host "Bundling the makeup-man beautifier..." -ForegroundColor Cyan
+Copy-Item "assets\jsxbin-conv-makeup-man.exe" -Destination "$TempDir\"
 
 # 3. Copy Installation Scripts
 Write-Host "Bundling installation scripts..." -ForegroundColor Cyan

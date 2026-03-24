@@ -1,5 +1,14 @@
 # CHANGELOG
 
+## [1.2.0] - 2026-03-24
+
+### Ground-Breaking Change: The "Makeup Man" Engine
+- **Replaced Bun/Prettier with Clang-Format**: Switched the beautification engine from a heavy Bun-based Prettier wrapper to a native Clang-format binary (internally named `jsxbin-conv-makeup-man`).
+- **Major Footprint Reduction**: Reduced the application bundle size by **97%** (from 150MB down to ~5MB).
+- **Native Performance**: Improved formatting speed by removing the Bun JS runtime overhead.
+- **Embedded Assets**: The beautifier is now managed via the `assets/` folder, simplifying the build process.
+- **Improved Formatting**: Switched to a customized Google-based JavaScript style for cleaner output.
+
 ## [1.1.0] - 2026-03-24
 
 ### Added

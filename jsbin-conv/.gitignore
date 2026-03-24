@@ -2,3 +2,8 @@
 # Created by `dart pub`
 .dart_tool/
 test.jsx
+__temp_compile_build/
+release/
+*.zip
+Jsbeautify
+assets/

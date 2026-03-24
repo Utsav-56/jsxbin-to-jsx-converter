@@ -19,12 +19,10 @@ dart pub get
 dart compile exe bin/jsbin_conv.dart -o "../$TEMP_DIR/jsbin-conv" -S "../$TEMP_DIR/debug_info"
 cd ..
 
-# 2. Compile Bun (minified and bytecode cached)
-echo "Compiling Bun beautification engine..."
-cd js-beautify
-bun install
-bun build ./index.ts --compile --minify --bytecode --outfile "../$TEMP_DIR/Jsbeautify"
-cd ..
+# 2. Copy Clang-format based beautifier (The "Makeup Man")
+echo "Bundling the makeup-man beautifier..."
+# Ensure assets exist, or just copy if you expect them to be there.
+cp assets/jsxbin-conv-makeup-man "$TEMP_DIR/"
 
 # 3. Copy Installation Scripts
 echo "Bundling installation scripts..."

@@ -1,11 +1,10 @@
 # JSXBIN to JSX Converter: High-Performance Deobfuscator & Formatter
 
 [![Built with Dart](https://img.shields.io/badge/Language-Dart-0175C2?logo=dart&logoColor=white)](https://dart.dev)
-[![Powered by Bun](https://img.shields.io/badge/Runtime-Bun-000000?logo=bun&logoColor=white)](https://bun.sh)
-[![Formatting by Prettier](https://img.shields.io/badge/Formatter-Prettier-F7B93E?logo=prettier&logoColor=black)](https://prettier.io)
+[![Powered by Clang-Format](https://img.shields.io/badge/Formatter-Clang--Format-00599C?logo=c%2B%2B&logoColor=white)](https://clang.llvm.org/docs/ClangFormat.html)
 [![Platform](https://img.shields.io/badge/Platform-Windows%20%7C%20macOS%20%7C%20Linux-4ab19a)](#platforms-support)
 
-A state-of-the-art, cross-platform tool designed to de-obfuscate Adobe ExtendScript **JSXBIN** files into clean, readable **JSX** (JavaScript) source code. Engineered for speed and precision using the Dart ecosystem and a Prettier-powered formatting engine.
+A state-of-the-art, cross-platform tool designed to de-obfuscate Adobe ExtendScript **JSXBIN** files into clean, readable **JSX** (JavaScript) source code. Engineered for speed and ultra-low footprint using the Dart ecosystem and a Clang-Format powered "Makeup Man" engine.
 
 ## Table of Contents
 - [What is JSXBIN vs JSX?](#what-is-jsxbin-vs-jsx)
@@ -58,7 +57,7 @@ graph TD
     D --> F[Bit-stream Reconstruction]
     F --> G[AST Node Mapping]
     G --> H[Raw JSX Generator]
-    H --> I[Jsbeautify Engine - Bun/Prettier]
+    H --> I[Makeup Man Engine - Clang-Format]
     I --> J[Final Readable Output .jsx]
     
     style D fill:#0175C2,color:#fff
@@ -67,7 +66,7 @@ graph TD
 ```
 
 1.  **Decoding Engine (Stage 1)**: The core Dart application handles the heavy lifting of bitwise manipulation. It identifies 50+ different node types, matches identifiers against the internal symbol table, and handles multi-byte number variants.
-2.  **Formatting Engine (Stage 2)**: Raw decoded output is often "minified" or lacks logical spacing. Our wrapper binary `Jsbeautify` utilizes **Prettier** to enforce consistent style, resolve semicolons, and fix indentation.
+2.  **Formatting Engine (Stage 2)**: Raw decoded output is often "minified" or lacks logical spacing. Our embedded "Makeup Man" binary (based on **Clang-Format**) enforces a clean Google-based style, resolves quotes, and fixes indentation with minimal overhead.
 
 ---
 
@@ -81,11 +80,11 @@ Located in `jsbin_conv/`. This is a native Dart application that performs the de
 - **Nesting Manager**: Handles the recursive "nesting levels" found in Adobe's proprietary encoding.
 - **Node Factories**: A registration system that dynamically instantiates AST nodes (Expressions, Statements, XML members) based on specific hex markers.
 
-### 2. The Beautifier (TypeScript + Bun)
-Located in `js-beautify/`. A high-speed formatting engine.
-- **Bun**: Used as the runtime for near-instant startup.
-- **Prettier**: The industry-standard engine used to format the final output.
-- **AOT Compiled**: Bundled into a standalone binary to eliminate the need for `node_modules` in production.
+### 2. The Makeup Man (Clang-Format)
+Located in `assets/`. A lightweight, high-performance formatting engine.
+- **Clang-Format**: Optimized C++ engine for lightning-fast formatting.
+- **Native**: No runtime required (no Bun/Node.js needed).
+- **Tiny Footprint**: Reduced the beautifier size from 150MB+ down to ~5MB.
 
 ---
 
@@ -142,12 +141,8 @@ The final artifacts will be stored in the `release/` directory.
 - **Dart SDK**: [Download](https://dart.dev/get-dart)
 - **Bun**: [Download](https://bun.sh)
 
-#### 1. Build Formatting Engine
-```bash
-cd js-beautify
-bun install
-bun build ./index.ts --compile --minify --bytecode --outfile Jsbeautify
-```
+#### 1. Setup Formatting Engine
+The `jsxbin-conv-makeup-man` binary (based on Clang-Format) should be placed in the `assets/` directory for your specific platform.
 
 #### 2. Build Decoding Engine
 ```bash
@@ -232,7 +227,7 @@ A: Yes, it supports both 1.0 and 2.0 (ES) versions.
 A: Dart provides a perfect balance of readable syntax and high-performance AOT compilation. Its ability to handle bitwise operations cleanly made it ideal for the decoding logic.
 
 **Q: Can I customize the formatting?**
-A: Yes! You can edit `js-beautify/index.ts` to change Prettier settings (single quotes, trailing commas, etc.) and re-build the binary.
+A: Yes! You can modify the `styleConfig` in `jsbin-conv/lib/src/js_beautifier.dart` to change Clang-Format settings and re-build the Dart core.
 
 ---
 
